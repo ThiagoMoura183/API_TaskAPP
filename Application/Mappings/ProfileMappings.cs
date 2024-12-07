@@ -11,7 +11,8 @@ public class ProfileMappings : Profile {
             .ForMember(x => x.RefreshTokenExpirationTime, x => x.MapFrom(x => AddFiveDays()))
             .ForMember(x => x.PasswordHash, x => x.MapFrom(x => x.Password));
         CreateMap<User, UserInfoViewModel>()
-            .ForMember(x => x.TokenJWT, x => x.MapFrom(x => GenerateGuid()));
+            // Pelo fato do ProfileMapping não ser possível realizar injeção de dependência do authService, vamos permitir nulo e alterar o valor no Handler
+            .ForMember(x => x.TokenJWT, x => x.AllowNull());
     }
 
     private string GenerateGuid() { return Guid.NewGuid().ToString(); }
