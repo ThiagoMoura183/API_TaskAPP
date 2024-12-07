@@ -9,6 +9,8 @@ builder.AddDatabase();
 builder.AddValidations();
 builder.AddMapper();
 builder.AddSwaggerDocs();
+builder.AddJWTAuth();
+builder.AddInjections();
 
 var app = builder.Build();
 
