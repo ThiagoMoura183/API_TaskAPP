@@ -47,4 +47,17 @@ public class AuthService(IConfiguration configuration) : IAuthService {
         randomNumberGenerator.GetBytes(secureRandomBytes);
         return Convert.ToBase64String(secureRandomBytes);
     }
+
+    public string HashingPassword(string password) {
+        byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < bytes.Length; i++) {
+            builder.Append(bytes[i].ToString("x2")); // o X2 entrega a representação hexadecimal da string
+        }
+
+        return builder.ToString();
+    }
+
 }

@@ -18,6 +18,7 @@ namespace Application.UserCQ.Handlers {
             // Mapeia para um objeto USER a partir do source "request", que é o CreateUserCommand
             var user = _mapper.Map<User>(request);
             user.RefreshToken = _authService.GenerateRefreshToken();
+            user.PasswordHash = _authService.HashingPassword(request.Password!);
 
             _context.Users.Add(user);
             _context.SaveChanges();
