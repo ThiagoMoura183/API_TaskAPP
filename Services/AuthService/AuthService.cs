@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Services.AuthService;
@@ -38,5 +39,12 @@ public class AuthService(IConfiguration configuration) : IAuthService {
         // O handler é responsável por manusear o token anteriormente gerado
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(token);
+    }
+
+    public string GenerateRefreshToken() {
+        var secureRandomBytes = new byte[128];
+        using var randomNumberGenerator = RandomNumberGenerator.Create();
+        randomNumberGenerator.GetBytes(secureRandomBytes);
+        return Convert.ToBase64String(secureRandomBytes);
     }
 }

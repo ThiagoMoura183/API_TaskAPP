@@ -7,15 +7,13 @@ namespace Application.Mappings;
 public class ProfileMappings : Profile {
     public ProfileMappings() {
         CreateMap<CreateUserCommand, User>()
-            .ForMember(x => x.RefreshToken, x => x.MapFrom(x => GenerateGuid()))
-            .ForMember(x => x.RefreshTokenExpirationTime, x => x.MapFrom(x => AddFiveDays()))
+            .ForMember(x => x.RefreshToken, x => x.AllowNull())
+            .ForMember(x => x.RefreshTokenExpirationTime, x => x.MapFrom(x => AddTenDays()))
             .ForMember(x => x.PasswordHash, x => x.MapFrom(x => x.Password));
         CreateMap<User, UserInfoViewModel>()
             // Pelo fato do ProfileMapping não ser possível realizar injeção de dependência do authService, vamos permitir nulo e alterar o valor no Handler
             .ForMember(x => x.TokenJWT, x => x.AllowNull());
     }
 
-    private string GenerateGuid() { return Guid.NewGuid().ToString(); }
-
-    private DateTime AddFiveDays() { return DateTime.Now.AddDays(5); }
+    private DateTime AddTenDays() { return DateTime.Now.AddDays(10); }
 }
