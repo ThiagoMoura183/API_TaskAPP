@@ -1,41 +1,28 @@
 ﻿using Application.Response;
 using Application.UserCQ.Commands;
 using Application.UserCQ.ViewModels;
+using AutoMapper;
 using Domain.Entity;
 using Infra.Persistency;
 using MediatR;
 
 namespace Application.UserCQ.Handlers {
-    public class CreateUserCommandHandler(TasksDbContext context) : IRequestHandler<CreateUserCommand, ResponseBase<UserInfoViewModel?>> {
+    public class CreateUserCommandHandler(TasksDbContext context, IMapper mapper) : IRequestHandler<CreateUserCommand, ResponseBase<UserInfoViewModel?>> {
         private readonly TasksDbContext _context = context;
-        public async Task<ResponseBase<UserInfoViewModel?>> Handle(CreateUserCommand request, CancellationToken cancellationToken) {
-            var user = new User() {
-                Name = request.Name,
-                Surname = request.Surname,
-                Email = request.Email,
-                PasswordHash = request.Password,
-                Username = request.Username,
-                RefreshToken = Guid.NewGuid().ToString(),
-                RefreshTokenExpirationTime = DateTime.Now.AddDays(5)
-            };
+        private readonly IMapper _mapper = mapper;
+
+        public async Task<ResponseBase<UserInfoViewModel>> Handle(CreateUserCommand request, CancellationToken cancellationToken) {
+
+            // Mapeia para um objeto USER a partir do source "request", que é o CreateUserCommand
+            var user = _mapper.Map<User>(request);
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            var userInfo = new ResponseBase<UserInfoViewModel>() {
+            return new ResponseBase<UserInfoViewModel>() {
                 ResponseInfo = null,
-                Value = new() {
-                    Name = user.Name,
-                    Surname = user.Surname,
-                    Email = user.Email,
-                    Username = user.Username,
-                    RefreshToken = user.RefreshToken,
-                    RefreshTokenExpirationTime = user.RefreshTokenExpirationTime,
-                    TokenJWT = Guid.NewGuid().ToString()
-                }
+                Value = _mapper.Map<UserInfoViewModel>(user)
             };
-
-            return userInfo;
         }
     }
 }

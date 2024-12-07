@@ -5,6 +5,7 @@ using FluentValidation;
 using Infra.Persistency;
 using Microsoft.EntityFrameworkCore;
 using System.Net.NetworkInformation;
+using Application.Mappings;
 
 namespace API {
     public static class BuilderExtesions {
@@ -24,6 +25,10 @@ namespace API {
         public static void AddValidations(this WebApplicationBuilder builder) {
             builder.Services.AddValidatorsFromAssemblyContaining<CreateUserCommandValidator>();
             builder.Services.AddFluentValidationAutoValidation();
+        }
+
+        public static void AddMapper(this WebApplicationBuilder builder) {
+            builder.Services.AddAutoMapper(typeof(ProfileMappings).Assembly);
         }
     }
 }
